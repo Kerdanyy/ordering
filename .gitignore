@@ -1,33 +1,39 @@
-HELP.md
+# Maven build files
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# IntelliJ IDEA files
+.idea/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
+## Java build files
+#*.class
+#*.jar
+#*.war
+#*.ear
+#
+## Log files
+#*.log
+#
+## Temporary files
+#*.tmp
+#*.temp
+#*.swp
+#*.swo
+#*.bak
+#
+## OS-specific files
+#.DS_Store
+#Thumbs.db
+#
+## Spring Boot specific
+## Ignore the Spring Boot application configuration file for local environment
+#application*.yml
+#application*.properties
+#
+## Ignore the Maven wrapper
+#.mvn/
+#mvnw*
+#!mvnw.cmd
+#!mvnw
+#
+## Others
+#logs/
