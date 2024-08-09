@@ -1,7 +1,7 @@
 package com.foodics.ordering.controller;
 
-import com.foodics.ordering.model.Ingredient;
-import com.foodics.ordering.service.StockService;
+import com.foodics.ordering.model.Order;
+import com.foodics.ordering.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +12,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController()
-@RequestMapping("/stock")
-@Tag(name = "Stock Controller", description = "Controller responsible for managing ingredient stock")
-public class StockController {
+@RequestMapping("/order")
+@Tag(name = "Order Controller", description = "Controller responsible for managing order")
+public class OrderController {
 
     @Autowired
-    StockService stockService;
+    OrderService orderService;
 
     @PostMapping()
-    @Operation(summary = "Add stock for ingredients", description = "Takes input a list of stock each composed of ingredient name and quality (in grams)")
-    public ResponseEntity addStock(@RequestBody List<Ingredient> stocks) {
-        stockService.addStock(stocks);
+    @Operation(summary = "Add order", description = "Takes input an order")
+    public ResponseEntity addOrder(@RequestBody Order order) {
+        orderService.addOrder(order);
         return new ResponseEntity(HttpStatus.OK);
     }
 }
