@@ -1,4 +1,4 @@
 package com.foodics.ordering.model;
 
-public record OrderItem(long productId, int quantity) {
+public record OrderItem(long id, int quantity) {
 }

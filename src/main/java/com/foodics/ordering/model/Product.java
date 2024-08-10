@@ -8,8 +8,7 @@ import java.util.HashMap;
 @Data
 public class Product {
     @DocumentId
-    private long id;
+    private String id;
     private String name;
-    private int quantity;
     private HashMap<String, Integer> ingredients;
 }

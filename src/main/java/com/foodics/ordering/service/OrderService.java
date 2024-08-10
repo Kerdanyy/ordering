@@ -36,9 +36,9 @@ public class OrderService {
             for (DocumentReference currentIngredientStockRef : currentStockListDocRef) {
                 Stock currentIngredientStock = transaction.get(currentIngredientStockRef).get().toObject(Stock.class);
                 for (OrderItem orderItem : order.getProducts()) {
-                    DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(String.valueOf(orderItem.productId()))).get();
+                    DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(String.valueOf(orderItem.id()))).get();
                     if (!productSnapshot.exists()) {
-                        throw new IllegalArgumentException("Only product with ID 1 is supported currently");
+                        throw new IllegalArgumentException("Only product with ID 1 is available currently");
                     }
                     for (int i = 0; i < orderItem.quantity(); i++) {
                         Product product = productSnapshot.toObject(Product.class);
