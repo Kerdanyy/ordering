@@ -4,7 +4,7 @@ import com.google.cloud.firestore.annotation.DocumentId;
 import lombok.Data;
 
 @Data
-public class Ingredient {
+public class Stock {
     @DocumentId
     private String name;
     private int quantity;

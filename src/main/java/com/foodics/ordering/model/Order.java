@@ -6,5 +6,7 @@ import java.util.List;
 
 @Data
 public class Order {
-    private List<Product> products;
+    List<OrderItem> products;
 }
+
+

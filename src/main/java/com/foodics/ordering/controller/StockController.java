@@ -1,6 +1,6 @@
 package com.foodics.ordering.controller;
 
-import com.foodics.ordering.model.Ingredient;
+import com.foodics.ordering.model.Stock;
 import com.foodics.ordering.service.EmailService;
 import com.foodics.ordering.service.StockService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,13 +25,13 @@ public class StockController {
 
     @GetMapping()
     @Operation(summary = "Get all ingredients stock", description = "Get all available stocks each composed of ingredient name and quality (in grams)")
-    public ResponseEntity<List<Ingredient>> getAllStock() {
+    public ResponseEntity<List<Stock>> getAllStock() {
         return new ResponseEntity<>(stockService.getAllStock(), HttpStatus.OK);
     }
 
     @PostMapping()
     @Operation(summary = "Add stock of ingredients", description = "Takes input a list of stock each composed of ingredient name and quality (in grams)")
-    public ResponseEntity<Void> addStock(@RequestBody List<Ingredient> stocks) {
+    public ResponseEntity<Void> addStock(@RequestBody List<Stock> stocks) {
         stockService.addStock(stocks);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -1,11 +1,12 @@
 package com.foodics.ordering.service;
 
 import com.foodics.ordering.Constants;
-import com.foodics.ordering.model.Ingredient;
-import com.foodics.ordering.model.IngredientEnum;
 import com.foodics.ordering.model.Order;
+import com.foodics.ordering.model.OrderItem;
 import com.foodics.ordering.model.Product;
+import com.foodics.ordering.model.Stock;
 import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
 import lombok.SneakyThrows;
@@ -29,39 +30,41 @@ public class OrderService {
 
     @SneakyThrows
     public void addOrder(Order order) {
-        HashMap<String, Ingredient> newStock = new HashMap<>();
+        HashMap<String, Stock> newStock = new HashMap<>();
         firestore.runTransaction((Transaction transaction) -> {
-            Iterable<DocumentReference> currentStock = firestore.collection(Constants.STOCK_COLLECTION_NAME).listDocuments();
-            for (DocumentReference docRef : currentStock) {
-                Ingredient currentIngredientStock = transaction.get(docRef).get().toObject(Ingredient.class);
-                for (Product product : order.getProducts()) {
-                    if (product.getId() != 1) {
+            Iterable<DocumentReference> currentStockListDocRef = firestore.collection(Constants.STOCK_COLLECTION_NAME).listDocuments();
+            for (DocumentReference currentIngredientStockRef : currentStockListDocRef) {
+                Stock currentIngredientStock = transaction.get(currentIngredientStockRef).get().toObject(Stock.class);
+                for (OrderItem orderItem : order.getProducts()) {
+                    DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(String.valueOf(orderItem.productId()))).get();
+                    if (!productSnapshot.exists()) {
                         throw new IllegalArgumentException("Only product with ID 1 is supported currently");
                     }
-                    for (int i = 0; i < product.getQuantity(); i++) {
-                        adjustStockQuantity(currentIngredientStock, newStock);
+                    for (int i = 0; i < orderItem.quantity(); i++) {
+                        Product product = productSnapshot.toObject(Product.class);
+                        adjustStockQuantity(currentIngredientStock, product, newStock);
                     }
                 }
             }
-            newStock.forEach((ingredientName, ingredient) -> transaction.set(firestore.collection(Constants.STOCK_COLLECTION_NAME).document(ingredientName), ingredient));
+            newStock.forEach((ingredientName, ingredientStock) -> transaction.set(firestore.collection(Constants.STOCK_COLLECTION_NAME).document(ingredientName), ingredientStock));
             transaction.set(firestore.collection(Constants.ORDER_COLLECTION_NAME).document(), order);
             return null;
         }).get();
     }
 
-    private void adjustStockQuantity(Ingredient ingredient, HashMap<String, Ingredient> newStock) {
-        switch (ingredient.getName()) {
+    private void adjustStockQuantity(Stock ingredientStock, Product product, HashMap<String, Stock> newStock) {
+        switch (ingredientStock.getName()) {
             case ("Beef"), ("Cheese"), ("Onion") ->
-                    ingredient.setQuantity(ingredient.getQuantity() - IngredientEnum.getQuantity(ingredient.getName()));
-            default -> throw new IllegalArgumentException("Unsupported ingredient: " + ingredient.getName());
+                    ingredientStock.setQuantity(ingredientStock.getQuantity() - product.getIngredients().get(ingredientStock.getName()));
+            default -> throw new IllegalArgumentException("Unsupported ingredient: " + ingredientStock.getName());
         }
-        if (!ingredient.isNotificationSent() && ingredient.getQuantity() <= ingredient.getInitialQuantity() / 2) {
-            emailService.sendEmail(toEmail, "Ingredient stock notification", ingredient.getName() + " ingredient stock below or equal 50%");
-            ingredient.setNotificationSent(true);
+        if (!ingredientStock.isNotificationSent() && ingredientStock.getQuantity() <= ingredientStock.getInitialQuantity() / 2) {
+            emailService.sendEmail(toEmail, "Ingredient stock notification", ingredientStock.getName() + " ingredient stock below or equal 50%");
+            ingredientStock.setNotificationSent(true);
         }
-        newStock.put(ingredient.getName(), ingredient);
-        if (ingredient.getQuantity() < 0) {
-            throw new IllegalArgumentException("Order cannot be completed as " + ingredient.getName() + " ingredient stock is not enough");
+        newStock.put(ingredientStock.getName(), ingredientStock);
+        if (ingredientStock.getQuantity() < 0) {
+            throw new IllegalArgumentException("Order cannot be completed as " + ingredientStock.getName() + " ingredient stock is not enough");
         }
     }
 }
