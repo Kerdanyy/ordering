@@ -9,8 +9,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 @Service
 public class OrderService {
@@ -20,25 +19,25 @@ public class OrderService {
 
     @SneakyThrows
     public void addOrder(Order order) {
-        List<Ingredient> newStock = new ArrayList<>();
+        HashMap<String, Ingredient> newStock = new HashMap<>();
         Iterable<DocumentReference> currentStock = firestore.collection(Constants.STOCK_COLLECTION_NAME).listDocuments();
         for (DocumentReference docRef : currentStock) {
             Ingredient currentIngredientStock = docRef.get().get().toObject(Ingredient.class);
             for (int i = 0; i < order.getProducts().size(); i++) {
-                adjustStockQuantity(currentIngredientStock);
+                adjustStockQuantity(currentIngredientStock, newStock);
             }
-            newStock.add(currentIngredientStock);
         }
-        firestore.collection(Constants.STOCK_COLLECTION_NAME).document().set(newStock);
+        newStock.forEach((ingredientName, ingredient) -> firestore.collection(Constants.STOCK_COLLECTION_NAME).document(ingredientName).set(ingredient));
         firestore.collection(Constants.ORDER_COLLECTION_NAME).document().set(order);
     }
 
-    private void adjustStockQuantity(Ingredient ingredient) {
+    private void adjustStockQuantity(Ingredient ingredient, HashMap<String, Ingredient> newStock) {
         switch (ingredient.getName()) {
             case ("Beef") -> ingredient.setQuantity(ingredient.getQuantity() - 150);
             case ("Cheese") -> ingredient.setQuantity(ingredient.getQuantity() - 30);
             case ("Onion") -> ingredient.setQuantity(ingredient.getQuantity() - 20);
         }
+        newStock.put(ingredient.getName(), ingredient);
         if (ingredient.getQuantity() < 0) {
             throw new AssertionError("Order cannot be completed as ingredient: " + ingredient.getName() + "stock is not enough");
         }
