@@ -9,6 +9,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,6 +19,12 @@ public class OrderService {
 
     @Autowired
     Firestore firestore;
+
+    @Autowired
+    EmailService emailService;
+
+    @Value("${email.to}")
+    private String toEmail;
 
     @SneakyThrows
     public void addOrder(Order order) {
@@ -43,13 +50,16 @@ public class OrderService {
 
     private void adjustStockQuantity(Ingredient ingredient, HashMap<String, Ingredient> newStock) {
         switch (ingredient.getName()) {
-            case ("Beef") -> ingredient.setQuantity(ingredient.getQuantity() - 150);
-            case ("Cheese") -> ingredient.setQuantity(ingredient.getQuantity() - 30);
-            case ("Onion") -> ingredient.setQuantity(ingredient.getQuantity() - 20);
+            case ("Beef") -> ingredient.setCurrentQuantity(ingredient.getCurrentQuantity() - 150);
+            case ("Cheese") -> ingredient.setCurrentQuantity(ingredient.getCurrentQuantity() - 30);
+            case ("Onion") -> ingredient.setCurrentQuantity(ingredient.getCurrentQuantity() - 20);
             default -> throw new IllegalArgumentException("Unsupported ingredient: " + ingredient.getName());
         }
         newStock.put(ingredient.getName(), ingredient);
-        if (ingredient.getQuantity() < 0) {
+        if (ingredient.getCurrentQuantity() <= ingredient.getInitialQuantity() / 2) {
+            emailService.sendEmail(toEmail, "Ingredient stock notification", "Ingredient: " + ingredient.getName() + "stock below or equal 50%");
+        }
+        if (ingredient.getCurrentQuantity() < 0) {
             throw new IllegalArgumentException("Order cannot be completed as ingredient: " + ingredient.getName() + "stock is not enough");
         }
     }

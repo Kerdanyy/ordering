@@ -7,5 +7,6 @@ import lombok.Data;
 public class Ingredient {
     @DocumentId
     private String name;
-    private int quantity;
+    private int currentQuantity;
+    private int initialQuantity;
 }

@@ -32,7 +32,6 @@ public class StockController {
     @PostMapping()
     @Operation(summary = "Add stock of ingredients", description = "Takes input a list of stock each composed of ingredient name and quality (in grams)")
     public ResponseEntity<Void> addStock(@RequestBody List<Ingredient> stocks) {
-        emailService.sendEmail("kerdany@live.com", "Hello World", "Hello World");
         stockService.addStock(stocks);
         return new ResponseEntity<>(HttpStatus.OK);
     }
