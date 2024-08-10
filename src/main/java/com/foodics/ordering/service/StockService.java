@@ -17,7 +17,7 @@ public class StockService {
 
     public void addStock(List<Ingredient> stocks) {
         stocks.forEach(ingredient -> {
-            ingredient.setInitialQuantity(ingredient.getCurrentQuantity());
+            ingredient.setInitialQuantity(ingredient.getQuantity());
             firestore.collection(Constants.STOCK_COLLECTION_NAME).document(ingredient.getName()).set(ingredient);
         });
     }

@@ -50,17 +50,17 @@ public class OrderService {
 
     private void adjustStockQuantity(Ingredient ingredient, HashMap<String, Ingredient> newStock) {
         switch (ingredient.getName()) {
-            case ("Beef") -> ingredient.setCurrentQuantity(ingredient.getCurrentQuantity() - 150);
-            case ("Cheese") -> ingredient.setCurrentQuantity(ingredient.getCurrentQuantity() - 30);
-            case ("Onion") -> ingredient.setCurrentQuantity(ingredient.getCurrentQuantity() - 20);
+            case ("Beef") -> ingredient.setQuantity(ingredient.getQuantity() - 150);
+            case ("Cheese") -> ingredient.setQuantity(ingredient.getQuantity() - 30);
+            case ("Onion") -> ingredient.setQuantity(ingredient.getQuantity() - 20);
             default -> throw new IllegalArgumentException("Unsupported ingredient: " + ingredient.getName());
         }
-        if (!ingredient.isStockNotificationSent() && ingredient.getCurrentQuantity() <= ingredient.getInitialQuantity() / 2) {
+        if (!ingredient.isNotificationSent() && ingredient.getQuantity() <= ingredient.getInitialQuantity() / 2) {
             emailService.sendEmail(toEmail, "Ingredient stock notification", "Ingredient: " + ingredient.getName() + "stock below or equal 50%");
-            ingredient.setStockNotificationSent(true);
+            ingredient.setNotificationSent(true);
         }
         newStock.put(ingredient.getName(), ingredient);
-        if (ingredient.getCurrentQuantity() < 0) {
+        if (ingredient.getQuantity() < 0) {
             throw new IllegalArgumentException("Order cannot be completed as ingredient: " + ingredient.getName() + "stock is not enough");
         }
     }
