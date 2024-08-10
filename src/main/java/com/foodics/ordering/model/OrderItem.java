@@ -1,4 +1,9 @@
 package com.foodics.ordering.model;
 
-public record OrderItem(long id, int quantity) {
+import lombok.Data;
+
+@Data
+public class OrderItem {
+    private long id;
+    private int quantity;
 }
