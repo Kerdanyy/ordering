@@ -55,10 +55,11 @@ public class OrderService {
             case ("Onion") -> ingredient.setCurrentQuantity(ingredient.getCurrentQuantity() - 20);
             default -> throw new IllegalArgumentException("Unsupported ingredient: " + ingredient.getName());
         }
-        newStock.put(ingredient.getName(), ingredient);
-        if (ingredient.getCurrentQuantity() <= ingredient.getInitialQuantity() / 2) {
+        if (!ingredient.isStockNotificationSent() && ingredient.getCurrentQuantity() <= ingredient.getInitialQuantity() / 2) {
             emailService.sendEmail(toEmail, "Ingredient stock notification", "Ingredient: " + ingredient.getName() + "stock below or equal 50%");
+            ingredient.setStockNotificationSent(true);
         }
+        newStock.put(ingredient.getName(), ingredient);
         if (ingredient.getCurrentQuantity() < 0) {
             throw new IllegalArgumentException("Order cannot be completed as ingredient: " + ingredient.getName() + "stock is not enough");
         }

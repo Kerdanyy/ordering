@@ -9,4 +9,5 @@ public class Ingredient {
     private String name;
     private int currentQuantity;
     private int initialQuantity;
+    private boolean stockNotificationSent;
 }
