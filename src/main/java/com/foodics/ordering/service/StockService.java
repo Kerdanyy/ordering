@@ -16,7 +16,7 @@ public class StockService {
     Firestore firestore;
 
     public void addStock(List<Ingredient> stocks) {
-        stocks.forEach(stock -> firestore.collection(Constants.STOCK_COLLECTION_NAME).document().set(stock));
+        stocks.forEach(stock -> firestore.collection(Constants.STOCK_COLLECTION_NAME).document(stock.getName()).set(stock));
     }
 
     public List<Ingredient> getAllStock() {

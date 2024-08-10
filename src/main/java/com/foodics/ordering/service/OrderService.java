@@ -3,6 +3,7 @@ package com.foodics.ordering.service;
 import com.foodics.ordering.Constants;
 import com.foodics.ordering.model.Ingredient;
 import com.foodics.ordering.model.Order;
+import com.foodics.ordering.model.Product;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import lombok.SneakyThrows;
@@ -23,8 +24,10 @@ public class OrderService {
         Iterable<DocumentReference> currentStock = firestore.collection(Constants.STOCK_COLLECTION_NAME).listDocuments();
         for (DocumentReference docRef : currentStock) {
             Ingredient currentIngredientStock = docRef.get().get().toObject(Ingredient.class);
-            for (int i = 0; i < order.getProducts().size(); i++) {
-                adjustStockQuantity(currentIngredientStock, newStock);
+            for (Product product : order.getProducts()) {
+                for (int i = 0; i < product.getQuantity(); i++) {
+                    adjustStockQuantity(currentIngredientStock, newStock);
+                }
             }
         }
         newStock.forEach((ingredientName, ingredient) -> firestore.collection(Constants.STOCK_COLLECTION_NAME).document(ingredientName).set(ingredient));
