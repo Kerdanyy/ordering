@@ -7,8 +7,8 @@ import com.google.cloud.firestore.FirestoreOptions;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 @Configuration
@@ -17,7 +17,7 @@ public class FirestoreConfig {
     @Bean
     @SneakyThrows
     public Firestore firestore() {
-        InputStream serviceAccount = new ClassPathResource("credentials.json").getInputStream();
+        InputStream serviceAccount = new FileInputStream("./credentials.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
         FirestoreOptions firestoreOptions = FirestoreOptions.newBuilder().setCredentialsProvider(FixedCredentialsProvider.create(credentials)).build();
         return firestoreOptions.getService();

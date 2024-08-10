@@ -20,7 +20,7 @@ public class StockController {
     StockService stockService;
 
     @GetMapping()
-    @Operation(summary = "Get all ingredients stock", description = "Get all stocks each composed of ingredient name and quality (in grams)")
+    @Operation(summary = "Get all ingredients stock", description = "Get all available stocks each composed of ingredient name and quality (in grams)")
     public ResponseEntity<List<Ingredient>> getAllStock() {
         return new ResponseEntity<>(stockService.getAllStock(), HttpStatus.OK);
     }

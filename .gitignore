@@ -4,36 +4,5 @@ target/
 # IntelliJ IDEA files
 .idea/
 
-## Java build files
-#*.class
-#*.jar
-#*.war
-#*.ear
-#
-## Log files
-#*.log
-#
-## Temporary files
-#*.tmp
-#*.temp
-#*.swp
-#*.swo
-#*.bak
-#
-## OS-specific files
-#.DS_Store
-#Thumbs.db
-#
-## Spring Boot specific
-## Ignore the Spring Boot application configuration file for local environment
-#application*.yml
-#application*.properties
-#
-## Ignore the Maven wrapper
-#.mvn/
-#mvnw*
-#!mvnw.cmd
-#!mvnw
-#
-## Others
-#logs/
+# Credentials file
+credentials.json
