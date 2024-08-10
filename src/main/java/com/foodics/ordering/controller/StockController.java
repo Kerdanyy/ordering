@@ -21,7 +21,7 @@ public class StockController {
 
     @GetMapping()
     @Operation(summary = "Get all ingredients stock", description = "Get all stocks each composed of ingredient name and quality (in grams)")
-    public ResponseEntity<List<Ingredient>> getAllStock(@RequestBody List<Ingredient> stocks) {
+    public ResponseEntity<List<Ingredient>> getAllStock() {
         return new ResponseEntity<>(stockService.getAllStock(), HttpStatus.OK);
     }
 
@@ -29,6 +29,6 @@ public class StockController {
     @Operation(summary = "Add stock of ingredients", description = "Takes input a list of stock each composed of ingredient name and quality (in grams)")
     public ResponseEntity<Void> addStock(@RequestBody List<Ingredient> stocks) {
         stockService.addStock(stocks);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
