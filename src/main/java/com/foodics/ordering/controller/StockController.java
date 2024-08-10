@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,9 +19,15 @@ public class StockController {
     @Autowired
     StockService stockService;
 
+    @GetMapping()
+    @Operation(summary = "Get all ingredients stock", description = "Get all stocks each composed of ingredient name and quality (in grams)")
+    public ResponseEntity<List<Ingredient>> getAllStock(@RequestBody List<Ingredient> stocks) {
+        return new ResponseEntity<>(stockService.getAllStock(), HttpStatus.OK);
+    }
+
     @PostMapping()
-    @Operation(summary = "Add stock for ingredients", description = "Takes input a list of stock each composed of ingredient name and quality (in grams)")
-    public ResponseEntity addStock(@RequestBody List<Ingredient> stocks) {
+    @Operation(summary = "Add stock of ingredients", description = "Takes input a list of stock each composed of ingredient name and quality (in grams)")
+    public ResponseEntity<Void> addStock(@RequestBody List<Ingredient> stocks) {
         stockService.addStock(stocks);
         return new ResponseEntity(HttpStatus.OK);
     }

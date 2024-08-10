@@ -1,4 +1,4 @@
-package com.foodics.ordering.firebase;
+package com.foodics.ordering.config;
 
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -17,7 +17,7 @@ public class FirestoreConfig {
     @Bean
     @SneakyThrows
     public Firestore firestore() {
-        InputStream serviceAccount = new ClassPathResource("ordering.json").getInputStream();
+        InputStream serviceAccount = new ClassPathResource("credentials.json").getInputStream();
         GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
         FirestoreOptions firestoreOptions = FirestoreOptions.newBuilder().setCredentialsProvider(FixedCredentialsProvider.create(credentials)).build();
         return firestoreOptions.getService();

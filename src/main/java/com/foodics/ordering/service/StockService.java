@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class StockService {
@@ -15,5 +18,15 @@ public class StockService {
 
     public void addStock(List<Ingredient> stocks) {
         stocks.forEach(stock -> firestore.collection(Constants.STOCK_COLLECTION_NAME).document().set(stock));
+    }
+
+    public List<Ingredient> getAllStock() {
+        return StreamSupport.stream(firestore.collection(Constants.STOCK_COLLECTION_NAME).listDocuments().spliterator(), false).map(docRef -> {
+            try {
+                return docRef.get().get().toObject(Ingredient.class);
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
     }
 }
