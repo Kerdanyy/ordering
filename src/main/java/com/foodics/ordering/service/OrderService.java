@@ -1,6 +1,7 @@
 package com.foodics.ordering.service;
 
 import com.foodics.ordering.Constants;
+import com.foodics.ordering.exception.ValidationException;
 import com.foodics.ordering.model.Order;
 import com.foodics.ordering.model.OrderItem;
 import com.foodics.ordering.model.Product;
@@ -38,7 +39,7 @@ public class OrderService {
                 for (OrderItem orderItem : order.getProducts()) {
                     DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(String.valueOf(orderItem.getId()))).get();
                     if (!productSnapshot.exists()) {
-                        throw new IllegalArgumentException("Only product with ID 1 is available currently");
+                        throw new ValidationException("Only product with ID 1 is available currently");
                     }
                     for (int i = 0; i < orderItem.getQuantity(); i++) {
                         Product product = productSnapshot.toObject(Product.class);
@@ -60,7 +61,7 @@ public class OrderService {
         }
         newStock.put(ingredientStock.getName(), ingredientStock);
         if (ingredientStock.getQuantity() < 0) {
-            throw new IllegalArgumentException("Order cannot be completed as " + ingredientStock.getName() + " ingredient stock is not enough");
+            throw new ValidationException("Order cannot be completed as " + ingredientStock.getName() + " ingredient stock is not enough");
         }
     }
 }
