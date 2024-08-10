@@ -3,7 +3,7 @@ package com.foodics.ordering.service;
 import com.foodics.ordering.Constants;
 import com.foodics.ordering.exception.ValidationException;
 import com.foodics.ordering.model.Order;
-import com.foodics.ordering.model.OrderItem;
+import com.foodics.ordering.model.OrderProduct;
 import com.foodics.ordering.model.Product;
 import com.foodics.ordering.model.Stock;
 import com.google.cloud.firestore.DocumentReference;
@@ -36,12 +36,12 @@ public class OrderService {
             Iterable<DocumentReference> currentStockListDocRef = firestore.collection(Constants.STOCK_COLLECTION_NAME).listDocuments();
             for (DocumentReference currentIngredientStockRef : currentStockListDocRef) {
                 Stock currentIngredientStock = transaction.get(currentIngredientStockRef).get().toObject(Stock.class);
-                for (OrderItem orderItem : order.getProducts()) {
-                    DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(String.valueOf(orderItem.getId()))).get();
+                for (OrderProduct orderProduct : order.getProducts()) {
+                    DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(String.valueOf(orderProduct.getId()))).get();
                     if (!productSnapshot.exists()) {
                         throw new ValidationException("Only product with ID 1 is available currently");
                     }
-                    for (int i = 0; i < orderItem.getQuantity(); i++) {
+                    for (int i = 0; i < orderProduct.getQuantity(); i++) {
                         Product product = productSnapshot.toObject(Product.class);
                         adjustStockQuantity(currentIngredientStock, product, newStock);
                     }
