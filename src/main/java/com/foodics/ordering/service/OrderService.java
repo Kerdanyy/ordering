@@ -2,6 +2,7 @@ package com.foodics.ordering.service;
 
 import com.foodics.ordering.Constants;
 import com.foodics.ordering.model.Ingredient;
+import com.foodics.ordering.model.IngredientEnum;
 import com.foodics.ordering.model.Order;
 import com.foodics.ordering.model.Product;
 import com.google.cloud.firestore.DocumentReference;
@@ -50,9 +51,8 @@ public class OrderService {
 
     private void adjustStockQuantity(Ingredient ingredient, HashMap<String, Ingredient> newStock) {
         switch (ingredient.getName()) {
-            case ("Beef") -> ingredient.setQuantity(ingredient.getQuantity() - 150);
-            case ("Cheese") -> ingredient.setQuantity(ingredient.getQuantity() - 30);
-            case ("Onion") -> ingredient.setQuantity(ingredient.getQuantity() - 20);
+            case ("Beef"), ("Cheese"), ("Onion") ->
+                    ingredient.setQuantity(ingredient.getQuantity() - IngredientEnum.getQuantity(ingredient.getName()));
             default -> throw new IllegalArgumentException("Unsupported ingredient: " + ingredient.getName());
         }
         if (!ingredient.isNotificationSent() && ingredient.getQuantity() <= ingredient.getInitialQuantity() / 2) {
