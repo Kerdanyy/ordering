@@ -21,14 +21,14 @@ public class IngredientController {
 
     @GetMapping()
     @Operation(summary = "Get all ingredients stocks", description = "Get all available ingredients stocks")
-    public ResponseEntity<List<Ingredient>> getAllStocks() {
-        return new ResponseEntity<>(ingredientService.getAllStocks(), HttpStatus.OK);
+    public ResponseEntity<List<Ingredient>> getAllIngredients() {
+        return new ResponseEntity<>(ingredientService.getAllIngredients(), HttpStatus.OK);
     }
 
     @PostMapping()
     @Operation(summary = "Add ingredients stocks", description = "Add new ingredients stocks")
-    public ResponseEntity<Void> addStocks(@RequestBody List<Ingredient> ingredients) {
-        ingredientService.addStocks(ingredients);
+    public ResponseEntity<Void> addIngredients(@RequestBody List<Ingredient> ingredients) {
+        ingredientService.addIngredients(ingredients);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

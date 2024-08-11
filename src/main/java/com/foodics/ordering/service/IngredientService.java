@@ -16,14 +16,14 @@ public class IngredientService {
     @Autowired
     Firestore firestore;
 
-    public void addStocks(List<Ingredient> ingredients) {
+    public void addIngredients(List<Ingredient> ingredients) {
         ingredients.forEach(ingredient -> {
             ingredient.setInitialQuantity(ingredient.getQuantity());
             firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document(ingredient.getName()).set(ingredient);
         });
     }
 
-    public List<Ingredient> getAllStocks() {
+    public List<Ingredient> getAllIngredients() {
         return StreamSupport.stream(firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).listDocuments().spliterator(), false).map(docRef -> {
             try {
                 return docRef.get().get().toObject(Ingredient.class);
