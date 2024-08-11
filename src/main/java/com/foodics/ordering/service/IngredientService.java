@@ -2,6 +2,7 @@ package com.foodics.ordering.service;
 
 import com.foodics.ordering.Constants;
 import com.foodics.ordering.exception.FirestoreException;
+import com.foodics.ordering.model.AddIngredientRequest;
 import com.foodics.ordering.model.Ingredient;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,9 @@ public class IngredientService {
     @Autowired
     Firestore firestore;
 
-    public void addIngredients(List<Ingredient> ingredients) {
-        ingredients.forEach(ingredient -> {
-            ingredient.setInitialQuantity(ingredient.getQuantity());
+    public void addIngredients(List<AddIngredientRequest> ingredients) {
+        ingredients.forEach(addIngredientRequest -> {
+            Ingredient ingredient = new Ingredient(addIngredientRequest.getName(), addIngredientRequest.getQuantity());
             firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document(ingredient.getName()).set(ingredient);
         });
     }

@@ -1,5 +1,6 @@
 package com.foodics.ordering.controller;
 
+import com.foodics.ordering.model.AddIngredientRequest;
 import com.foodics.ordering.model.Ingredient;
 import com.foodics.ordering.service.IngredientService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +28,7 @@ public class IngredientController {
 
     @PostMapping()
     @Operation(summary = "Add ingredients stocks", description = "Add new ingredients stocks")
-    public ResponseEntity<Void> addIngredients(@RequestBody List<Ingredient> ingredients) {
+    public ResponseEntity<Void> addIngredients(@RequestBody List<AddIngredientRequest> ingredients) {
         ingredientService.addIngredients(ingredients);
         return new ResponseEntity<>(HttpStatus.OK);
     }

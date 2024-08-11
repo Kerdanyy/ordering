@@ -2,8 +2,8 @@ package com.foodics.ordering.service;
 
 import com.foodics.ordering.Constants;
 import com.foodics.ordering.exception.ValidationException;
+import com.foodics.ordering.model.AddOrderRequest;
 import com.foodics.ordering.model.Ingredient;
-import com.foodics.ordering.model.Order;
 import com.foodics.ordering.model.OrderProduct;
 import com.foodics.ordering.model.Product;
 import com.google.cloud.firestore.DocumentReference;
@@ -32,14 +32,14 @@ public class OrderService {
     private String toEmail;
 
     @SneakyThrows
-    public void addOrder(Order order) {
+    public void addOrder(AddOrderRequest addOrderRequest) {
         Map<String, Ingredient> newStock = new HashMap<>();
         try {
             firestore.runTransaction((Transaction transaction) -> {
                 Iterable<DocumentReference> currentStockListDocRef = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).listDocuments();
                 for (DocumentReference currentIngredientStockRef : currentStockListDocRef) {
                     Ingredient currentIngredient = transaction.get(currentIngredientStockRef).get().toObject(Ingredient.class);
-                    for (OrderProduct orderProduct : order.getProducts()) {
+                    for (OrderProduct orderProduct : addOrderRequest.getProducts()) {
                         DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(orderProduct.getId())).get();
                         if (!productSnapshot.exists()) {
                             throw new ValidationException("Product with id " + orderProduct.getId() + " does not exist");
@@ -51,7 +51,7 @@ public class OrderService {
                     }
                 }
                 newStock.forEach((ingredientName, ingredient) -> transaction.set(firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document(ingredientName), ingredient));
-                transaction.set(firestore.collection(Constants.ORDER_COLLECTION_NAME).document(), order);
+                transaction.set(firestore.collection(Constants.ORDER_COLLECTION_NAME).document(), addOrderRequest);
                 return null;
             }).get();
         } catch (ExecutionException ex) {

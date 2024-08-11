@@ -1,6 +1,6 @@
 package com.foodics.ordering.controller;
 
-import com.foodics.ordering.model.Order;
+import com.foodics.ordering.model.AddOrderRequest;
 import com.foodics.ordering.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,8 +22,8 @@ public class OrderController {
 
     @PostMapping()
     @Operation(summary = "Add order", description = "Takes input an order containing list of order products")
-    public ResponseEntity<HttpStatus> addOrder(@RequestBody Order order) {
-        orderService.addOrder(order);
+    public ResponseEntity<HttpStatus> addOrder(@RequestBody AddOrderRequest addOrderRequest) {
+        orderService.addOrder(addOrderRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
