@@ -17,9 +17,7 @@ public class ProductService {
     Firestore firestore;
 
     public void addProducts(List<Product> products) {
-        products.forEach(product -> {
-            firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(product.getId()).set(product);
-        });
+        products.forEach(product -> firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(product.getId()).set(product));
     }
 
     public List<Product> getAllProducts() {
