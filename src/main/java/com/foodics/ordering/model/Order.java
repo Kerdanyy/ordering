@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddOrderRequest {
+public class Order {
     List<OrderProduct> products;
 }
 

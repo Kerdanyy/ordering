@@ -2,8 +2,8 @@ package com.foodics.ordering;
 
 import com.foodics.ordering.exception.FirestoreException;
 import com.foodics.ordering.exception.ValidationException;
-import com.foodics.ordering.model.AddOrderRequest;
 import com.foodics.ordering.model.Ingredient;
+import com.foodics.ordering.model.Order;
 import com.foodics.ordering.model.OrderProduct;
 import com.foodics.ordering.model.Product;
 import com.foodics.ordering.service.OrderService;
@@ -68,10 +68,10 @@ class OrderServiceTest {
 
         int productQuantity = 1;
         OrderProduct orderProduct = new OrderProduct(productId, productQuantity);
-        AddOrderRequest addOrderRequest = new AddOrderRequest(List.of(orderProduct));
+        Order order = new Order(List.of(orderProduct));
 
         // Act
-        orderService.addOrder(addOrderRequest);
+        orderService.addOrder(order);
 
         // Assert
         Ingredient updatedBeef = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").get().get().toObject(Ingredient.class);
@@ -82,9 +82,9 @@ class OrderServiceTest {
         assertEquals(170, updatedCheese.getQuantity());
         assertEquals(80, updatedOnion.getQuantity(), "");
 
-        List<AddOrderRequest> storedOrders = firestore.collection(Constants.ORDER_COLLECTION_NAME).get().get().toObjects(AddOrderRequest.class);
-        AddOrderRequest storedOrder = storedOrders.get(0);
-        assertEquals(addOrderRequest, storedOrder);
+        List<Order> storedOrders = firestore.collection(Constants.ORDER_COLLECTION_NAME).get().get().toObjects(Order.class);
+        Order storedOrder = storedOrders.get(0);
+        assertEquals(order, storedOrder);
     }
 
     @Test
@@ -102,10 +102,10 @@ class OrderServiceTest {
 
         int productQuantity = 1;
         OrderProduct orderProduct = new OrderProduct(productId, productQuantity);
-        AddOrderRequest addOrderRequest = new AddOrderRequest(List.of(orderProduct));
+        Order order = new Order(List.of(orderProduct));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class, () -> orderService.addOrder(addOrderRequest));
+        ValidationException exception = assertThrows(ValidationException.class, () -> orderService.addOrder(order));
         assertEquals("Order cannot be completed as beef ingredient stock is not enough", exception.getMessage());
     }
 
@@ -125,10 +125,10 @@ class OrderServiceTest {
         String notFoundProductId = "3";
         int productQuantity = 1;
         OrderProduct orderProduct = new OrderProduct(notFoundProductId, productQuantity);
-        AddOrderRequest addOrderRequest = new AddOrderRequest(List.of(orderProduct));
+        Order order = new Order(List.of(orderProduct));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class, () -> orderService.addOrder(addOrderRequest));
+        ValidationException exception = assertThrows(ValidationException.class, () -> orderService.addOrder(order));
         assertEquals("Product with id 3 does not exist", exception.getMessage());
     }
 

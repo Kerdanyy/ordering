@@ -1,16 +1,15 @@
 package com.foodics.ordering.controller;
 
-import com.foodics.ordering.model.AddOrderRequest;
+import com.foodics.ordering.model.Order;
 import com.foodics.ordering.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController()
 @RequestMapping("/order")
@@ -20,10 +19,16 @@ public class OrderController {
     @Autowired
     OrderService orderService;
 
+    @GetMapping()
+    @Operation(summary = "Get all orders", description = "Get all available orders")
+    public ResponseEntity<List<Order>> getAllOrders() {
+        return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
+    }
+
     @PostMapping()
     @Operation(summary = "Add order", description = "Takes input an order containing list of order products")
-    public ResponseEntity<HttpStatus> addOrder(@RequestBody AddOrderRequest addOrderRequest) {
-        orderService.addOrder(addOrderRequest);
+    public ResponseEntity<HttpStatus> addOrder(@RequestBody Order order) {
+        orderService.addOrder(order);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
