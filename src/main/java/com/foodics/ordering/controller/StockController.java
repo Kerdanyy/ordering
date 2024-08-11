@@ -1,7 +1,6 @@
 package com.foodics.ordering.controller;
 
 import com.foodics.ordering.model.Stock;
-import com.foodics.ordering.service.EmailService;
 import com.foodics.ordering.service.StockService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,9 +18,6 @@ public class StockController {
 
     @Autowired
     StockService stockService;
-
-    @Autowired
-    EmailService emailService;
 
     @GetMapping()
     @Operation(summary = "Get all ingredients stock", description = "Get all available stocks each composed of ingredient name and quality (in grams)")
