@@ -6,7 +6,6 @@ import com.foodics.ordering.model.Ingredient;
 import com.foodics.ordering.model.Order;
 import com.foodics.ordering.model.OrderProduct;
 import com.foodics.ordering.model.Product;
-import com.foodics.ordering.service.EmailService;
 import com.foodics.ordering.service.OrderService;
 import com.google.cloud.firestore.Firestore;
 import lombok.SneakyThrows;
@@ -30,9 +29,6 @@ class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private EmailService emailService;
 
     @Autowired
     @Qualifier("firestoreTesting")
