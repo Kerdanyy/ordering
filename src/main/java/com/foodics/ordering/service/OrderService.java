@@ -41,9 +41,9 @@ public class OrderService {
                 for (DocumentReference currentIngredientStockRef : currentStockListDocRef) {
                     Ingredient currentIngredient = transaction.get(currentIngredientStockRef).get().toObject(Ingredient.class);
                     for (OrderProduct orderProduct : order.getProducts()) {
-                        DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(orderProduct.getId())).get();
+                        DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(orderProduct.getProductId())).get();
                         if (!productSnapshot.exists()) {
-                            throw new ValidationException("Product with id " + orderProduct.getId() + " does not exist");
+                            throw new ValidationException("Product with id " + orderProduct.getProductId() + " does not exist");
                         }
                         for (int i = 0; i < orderProduct.getQuantity(); i++) {
                             Product product = productSnapshot.toObject(Product.class);
