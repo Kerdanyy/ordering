@@ -84,8 +84,7 @@ class OrderServiceTest {
 
         List<AddOrderRequest> storedOrders = firestore.collection(Constants.ORDER_COLLECTION_NAME).get().get().toObjects(AddOrderRequest.class);
         AddOrderRequest storedOrder = storedOrders.get(0);
-        assertEquals(1, storedOrders.size());
-        assertEquals(addOrderRequest.getProducts(), storedOrder.getProducts());
+        assertEquals(addOrderRequest, storedOrder);
     }
 
     @Test
