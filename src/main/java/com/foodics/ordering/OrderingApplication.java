@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "Ordering API", version = "1.0", description = "API for managing orders, ingredients and products"),
+@OpenAPIDefinition(info = @Info(title = "Foodics Ordering API", version = "1.0", description = "API for managing orders, ingredients and products"),
         servers = {@Server(url = "/api", description = "Default Server URL")})
 public class OrderingApplication {
 
