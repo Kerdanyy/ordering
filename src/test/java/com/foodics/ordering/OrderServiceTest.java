@@ -50,49 +50,58 @@ class OrderServiceTest {
     @Test
     void testAddOrder_Success() throws Exception {
         // Arrange
-        Ingredient beef = new Ingredient("Beef", 500, 500, false);
-        Ingredient cheese = new Ingredient("Cheese", 200, 200, false);
-        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Beef").set(beef).get();
-        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Cheese").set(cheese).get();
+        Ingredient beef = new Ingredient("beef", 500);
+        Ingredient cheese = new Ingredient("cheese", 200);
+        Ingredient onion = new Ingredient("onion", 100);
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("cheese").set(cheese).get();
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("onion").set(onion).get();
 
+        String productId = "1";
         Map<String, Integer> ingredients = new HashMap<>();
-        ingredients.put("Beef", 150);
-        ingredients.put("Cheese", 30);
-        Product product = new Product("1", "Burger", ingredients);
+        ingredients.put("beef", 150);
+        ingredients.put("cheese", 30);
+        ingredients.put("onion", 20);
+        Product product = new Product(productId, "burger", ingredients);
         firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document("1").set(product).get();
 
-        OrderProduct orderProduct = new OrderProduct("1", 1);
+        int productQuantity = 1;
+        OrderProduct orderProduct = new OrderProduct(productId, productQuantity);
         Order order = new Order(List.of(orderProduct));
 
         // Act
         orderService.addOrder(order);
 
         // Assert
-        Ingredient updatedBeef = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Beef").get().get().toObject(Ingredient.class);
-        Ingredient updatedCheese = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Cheese").get().get().toObject(Ingredient.class);
+        Ingredient updatedBeef = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").get().get().toObject(Ingredient.class);
+        Ingredient updatedCheese = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("cheese").get().get().toObject(Ingredient.class);
+        Ingredient updatedOnion = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("onion").get().get().toObject(Ingredient.class);
 
         assertEquals(350, updatedBeef.getQuantity());
         assertEquals(170, updatedCheese.getQuantity());
+        assertEquals(80, updatedOnion.getQuantity());
     }
 
     @Test
     @SneakyThrows
     void testAddOrder_InsufficientStock_ThrowsException() {
         // Arrange
-        Ingredient beef = new Ingredient("Beef", 100, 100, false);
-        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Beef").set(beef).get();
+        Ingredient beef = new Ingredient("beef", 100);
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
 
+        String productId = "2";
         Map<String, Integer> ingredients = new HashMap<>();
-        ingredients.put("Beef", 150);
-        Product product = new Product("1", "Burger", ingredients);
-        firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document("1").set(product).get();
+        ingredients.put("beef", 150);
+        Product product = new Product(productId, "burger", ingredients);
+        firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product).get();
 
-        OrderProduct orderProduct = new OrderProduct("1", 1);
+        int productQuantity = 1;
+        OrderProduct orderProduct = new OrderProduct(productId, productQuantity);
         Order order = new Order(List.of(orderProduct));
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class, () -> orderService.addOrder(order));
-        assertEquals("Order cannot be completed as Beef ingredient stock is not enough", exception.getMessage());
+        assertEquals("Order cannot be completed as beef ingredient stock is not enough", exception.getMessage());
     }
 
     private void clearFirestore() {

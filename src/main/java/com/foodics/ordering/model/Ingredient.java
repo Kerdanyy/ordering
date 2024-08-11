@@ -1,12 +1,10 @@
 package com.foodics.ordering.model;
 
 import com.google.cloud.firestore.annotation.DocumentId;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class Ingredient {
     @DocumentId
@@ -14,4 +12,11 @@ public class Ingredient {
     private int quantity; //in grams
     private int initialQuantity;
     private boolean notificationSent;
+
+    public Ingredient(String name, int quantity) {
+        this.name = name;
+        this.quantity = quantity;
+    }
 }
+
+
