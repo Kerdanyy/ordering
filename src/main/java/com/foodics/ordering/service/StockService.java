@@ -1,6 +1,7 @@
 package com.foodics.ordering.service;
 
 import com.foodics.ordering.Constants;
+import com.foodics.ordering.exception.FirestoreException;
 import com.foodics.ordering.model.Stock;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class StockService {
                 return docRef.get().get().toObject(Stock.class);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
+                throw new FirestoreException(e);
             } catch (ExecutionException e) {
-                throw new RuntimeException(e);
+                throw new FirestoreException(e);
             }
         }).toList();
     }
