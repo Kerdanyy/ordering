@@ -79,7 +79,12 @@ class OrderServiceTest {
 
         assertEquals(350, updatedBeef.getQuantity());
         assertEquals(170, updatedCheese.getQuantity());
-        assertEquals(80, updatedOnion.getQuantity());
+        assertEquals(80, updatedOnion.getQuantity(), "");
+
+        List<AddOrderRequest> storedOrders = firestore.collection(Constants.ORDER_COLLECTION_NAME).get().get().toObjects(AddOrderRequest.class);
+        AddOrderRequest storedOrder = storedOrders.get(0);
+        assertEquals(1, storedOrders.size());
+        assertEquals(addOrderRequest.getProducts(), storedOrder.getProducts());
     }
 
     @Test
