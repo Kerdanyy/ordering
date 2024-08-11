@@ -2,7 +2,7 @@ package com.foodics.ordering.service;
 
 import com.foodics.ordering.Constants;
 import com.foodics.ordering.exception.FirestoreException;
-import com.foodics.ordering.model.Stock;
+import com.foodics.ordering.model.Ingredient;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,21 +12,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.StreamSupport;
 
 @Service
-public class StockService {
+public class IngredientService {
     @Autowired
     Firestore firestore;
 
-    public void addStocks(List<Stock> stocks) {
-        stocks.forEach(ingredientStock -> {
-            ingredientStock.setInitialQuantity(ingredientStock.getQuantity());
-            firestore.collection(Constants.STOCK_COLLECTION_NAME).document(ingredientStock.getName()).set(ingredientStock);
+    public void addStocks(List<Ingredient> ingredients) {
+        ingredients.forEach(ingredient -> {
+            ingredient.setInitialQuantity(ingredient.getQuantity());
+            firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document(ingredient.getName()).set(ingredient);
         });
     }
 
-    public List<Stock> getAllStocks() {
-        return StreamSupport.stream(firestore.collection(Constants.STOCK_COLLECTION_NAME).listDocuments().spliterator(), false).map(docRef -> {
+    public List<Ingredient> getAllStocks() {
+        return StreamSupport.stream(firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).listDocuments().spliterator(), false).map(docRef -> {
             try {
-                return docRef.get().get().toObject(Stock.class);
+                return docRef.get().get().toObject(Ingredient.class);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new FirestoreException(e);
