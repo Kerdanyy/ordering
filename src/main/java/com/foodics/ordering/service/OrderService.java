@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class OrderService {
@@ -33,25 +34,29 @@ public class OrderService {
     @SneakyThrows
     public void addOrder(Order order) {
         Map<String, Ingredient> newStock = new HashMap<>();
-        firestore.runTransaction((Transaction transaction) -> {
-            Iterable<DocumentReference> currentStockListDocRef = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).listDocuments();
-            for (DocumentReference currentIngredientStockRef : currentStockListDocRef) {
-                Ingredient currentIngredient = transaction.get(currentIngredientStockRef).get().toObject(Ingredient.class);
-                for (OrderProduct orderProduct : order.getProducts()) {
-                    DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(orderProduct.getId())).get();
-                    if (!productSnapshot.exists()) {
-                        throw new ValidationException("Product with id " + orderProduct.getId() + " does not exist");
-                    }
-                    for (int i = 0; i < orderProduct.getQuantity(); i++) {
-                        Product product = productSnapshot.toObject(Product.class);
-                        adjustStockQuantity(currentIngredient, product, newStock);
+        try {
+            firestore.runTransaction((Transaction transaction) -> {
+                Iterable<DocumentReference> currentStockListDocRef = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).listDocuments();
+                for (DocumentReference currentIngredientStockRef : currentStockListDocRef) {
+                    Ingredient currentIngredient = transaction.get(currentIngredientStockRef).get().toObject(Ingredient.class);
+                    for (OrderProduct orderProduct : order.getProducts()) {
+                        DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(orderProduct.getId())).get();
+                        if (!productSnapshot.exists()) {
+                            throw new ValidationException("Product with id " + orderProduct.getId() + " does not exist");
+                        }
+                        for (int i = 0; i < orderProduct.getQuantity(); i++) {
+                            Product product = productSnapshot.toObject(Product.class);
+                            adjustStockQuantity(currentIngredient, product, newStock);
+                        }
                     }
                 }
-            }
-            newStock.forEach((ingredientName, ingredient) -> transaction.set(firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document(ingredientName), ingredient));
-            transaction.set(firestore.collection(Constants.ORDER_COLLECTION_NAME).document(), order);
-            return null;
-        }).get();
+                newStock.forEach((ingredientName, ingredient) -> transaction.set(firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document(ingredientName), ingredient));
+                transaction.set(firestore.collection(Constants.ORDER_COLLECTION_NAME).document(), order);
+                return null;
+            }).get();
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     private void adjustStockQuantity(Ingredient ingredient, Product product, Map<String, Ingredient> newStock) {
