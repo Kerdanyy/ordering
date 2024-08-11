@@ -63,7 +63,7 @@ class OrderServiceTest {
         ingredients.put("cheese", 30);
         ingredients.put("onion", 20);
         Product product = new Product(productId, "burger", ingredients);
-        firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document("1").set(product).get();
+        firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product).get();
 
         int productQuantity = 1;
         OrderProduct orderProduct = new OrderProduct(productId, productQuantity);
@@ -102,6 +102,29 @@ class OrderServiceTest {
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class, () -> orderService.addOrder(order));
         assertEquals("Order cannot be completed as beef ingredient stock is not enough", exception.getMessage());
+    }
+
+    @Test
+    @SneakyThrows
+    void testAddOrder_ProductIdNotFound_ThrowsException() {
+        // Arrange
+        Ingredient beef = new Ingredient("beef", 500);
+        firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
+
+        String productId = "1";
+        Map<String, Integer> ingredients = new HashMap<>();
+        ingredients.put("beef", 150);
+        Product product2 = new Product(productId, "burger", ingredients);
+        firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product2).get();
+
+        String notFoundProductId = "3";
+        int productQuantity = 1;
+        OrderProduct orderProduct = new OrderProduct(notFoundProductId, productQuantity);
+        Order order = new Order(List.of(orderProduct));
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class, () -> orderService.addOrder(order));
+        assertEquals("Product with id 3 does not exist", exception.getMessage());
     }
 
     private void clearFirestore() {
