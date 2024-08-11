@@ -8,6 +8,7 @@ import com.foodics.ordering.model.OrderProduct;
 import com.foodics.ordering.model.Product;
 import com.foodics.ordering.service.OrderService;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteBatch;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -134,16 +135,16 @@ class OrderServiceTest {
 
     private void clearFirestore() {
         firestore.listCollections().forEach(collectionRef -> {
-            collectionRef.listDocuments().forEach(docRef -> {
-                try {
-                    docRef.delete().get();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new FirestoreException(e);
-                } catch (ExecutionException e) {
-                    throw new FirestoreException(e);
-                }
-            });
+            try {
+                WriteBatch batch = firestore.batch();
+                collectionRef.listDocuments().forEach(docRef -> {
+                    batch.delete(docRef);
+                });
+                batch.commit().get();
+            } catch (InterruptedException | ExecutionException e) {
+                Thread.currentThread().interrupt();
+                throw new FirestoreException(e);
+            }
         });
     }
 }
