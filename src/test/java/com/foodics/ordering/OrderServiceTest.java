@@ -71,7 +71,6 @@ class OrderServiceTest {
 
         // Act
         orderService.addOrder(order);
-        Thread.sleep(3000);
 
         // Assert
         Ingredient updatedBeef = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").get().get().toObject(Ingredient.class);
