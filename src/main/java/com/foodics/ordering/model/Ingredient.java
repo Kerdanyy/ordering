@@ -16,6 +16,7 @@ public class Ingredient {
     public Ingredient(String name, int quantity) {
         this.name = name;
         this.quantity = quantity;
+        this.initialQuantity = quantity;
     }
 }
 

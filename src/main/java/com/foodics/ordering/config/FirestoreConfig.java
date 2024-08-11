@@ -5,10 +5,9 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -19,7 +18,7 @@ public class FirestoreConfig {
     private static final String TESTING_DATABASE_ID = "testing";
 
     @Bean
-    @Primary
+    @Profile("default")
     @SneakyThrows
     public Firestore firestore() {
         InputStream serviceAccount = new FileInputStream("./credentials.json");
@@ -29,7 +28,7 @@ public class FirestoreConfig {
     }
 
     @Bean
-    @Qualifier("firestoreTesting")
+    @Profile("testing")
     @SneakyThrows
     public Firestore firestoreTesting() {
         InputStream serviceAccount = new FileInputStream("./credentials.json");
