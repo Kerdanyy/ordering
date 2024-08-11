@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class OrderService {
@@ -31,7 +32,7 @@ public class OrderService {
 
     @SneakyThrows
     public void addOrder(Order order) {
-        HashMap<String, Ingredient> newStock = new HashMap<>();
+        Map<String, Ingredient> newStock = new HashMap<>();
         firestore.runTransaction((Transaction transaction) -> {
             Iterable<DocumentReference> currentStockListDocRef = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).listDocuments();
             for (DocumentReference currentIngredientStockRef : currentStockListDocRef) {
@@ -53,7 +54,7 @@ public class OrderService {
         }).get();
     }
 
-    private void adjustStockQuantity(Ingredient ingredient, Product product, HashMap<String, Ingredient> newStock) {
+    private void adjustStockQuantity(Ingredient ingredient, Product product, Map<String, Ingredient> newStock) {
         ingredient.setQuantity(ingredient.getQuantity() - product.getIngredients().get(ingredient.getName()));
         if (!ingredient.isNotificationSent() && ingredient.getQuantity() <= ingredient.getInitialQuantity() / 2) {
             emailService.sendEmail(toEmail, "Ingredient Stock Notification", ingredient.getName() + " ingredient stock reached 50%");
