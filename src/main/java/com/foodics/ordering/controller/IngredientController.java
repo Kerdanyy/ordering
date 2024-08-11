@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController()
 @RequestMapping("/ingredient")
-@Tag(name = "Stock Controller", description = "Controller responsible for managing ingredient stocks")
+@Tag(name = "Ingredient Controller", description = "Controller responsible for managing ingredient stocks")
 public class IngredientController {
 
     @Autowired
