@@ -14,6 +14,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
@@ -33,7 +34,10 @@ class OrderServiceTest {
     @Autowired
     private EmailService emailService;
 
-    private Firestore firestore;
+    @Autowired
+    @Qualifier("firestoreTesting")
+    private Firestore firestoreTesting;
+
 
     @BeforeEach
     void setUp() {
@@ -52,14 +56,14 @@ class OrderServiceTest {
         // Arrange
         Ingredient beef = new Ingredient("Beef", 500, 500, false);
         Ingredient cheese = new Ingredient("Cheese", 200, 200, false);
-        firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Beef").set(beef).get();
-        firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Cheese").set(cheese).get();
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Beef").set(beef).get();
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Cheese").set(cheese).get();
 
         Map<String, Integer> ingredients = new HashMap<>();
         ingredients.put("Beef", 150);
         ingredients.put("Cheese", 30);
         Product product = new Product("1", "Burger", ingredients);
-        firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document("1").set(product).get();
+        firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document("1").set(product).get();
 
         OrderProduct orderProduct = new OrderProduct("1", 1);
         Order order = new Order(List.of(orderProduct));
@@ -68,8 +72,8 @@ class OrderServiceTest {
         orderService.addOrder(order);
 
         // Assert
-        Ingredient updatedBeef = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Beef").get().get().toObject(Ingredient.class);
-        Ingredient updatedCheese = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Cheese").get().get().toObject(Ingredient.class);
+        Ingredient updatedBeef = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Beef").get().get().toObject(Ingredient.class);
+        Ingredient updatedCheese = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Cheese").get().get().toObject(Ingredient.class);
 
         assertEquals(350, updatedBeef.getQuantity());
         assertEquals(170, updatedCheese.getQuantity());
@@ -80,12 +84,12 @@ class OrderServiceTest {
     void testAddOrder_InsufficientStock_ThrowsException() {
         // Arrange
         Ingredient beef = new Ingredient("Beef", 100, 100, false);
-        firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Beef").set(beef).get();
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("Beef").set(beef).get();
 
         Map<String, Integer> ingredients = new HashMap<>();
         ingredients.put("Beef", 150);
         Product product = new Product("1", "Burger", ingredients);
-        firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document("1").set(product).get();
+        firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document("1").set(product).get();
 
         OrderProduct orderProduct = new OrderProduct("1", 1);
         Order order = new Order(List.of(orderProduct));
@@ -96,7 +100,7 @@ class OrderServiceTest {
     }
 
     private void clearFirestore() {
-        firestore.listCollections().forEach(collectionRef -> {
+        firestoreTesting.listCollections().forEach(collectionRef -> {
             collectionRef.listDocuments().forEach(docRef -> {
                 try {
                     docRef.delete().get();
