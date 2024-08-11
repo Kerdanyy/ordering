@@ -27,7 +27,7 @@ public class IngredientController {
     }
 
     @PostMapping()
-    @Operation(summary = "Add ingredients stocks", description = "Add new ingredients stocks")
+    @Operation(summary = "Add ingredients stocks", description = "Add new ingredients stocks (in grams)")
     public ResponseEntity<Void> addIngredients(@RequestBody List<AddIngredientRequest> ingredients) {
         ingredientService.addIngredients(ingredients);
         return new ResponseEntity<>(HttpStatus.OK);
