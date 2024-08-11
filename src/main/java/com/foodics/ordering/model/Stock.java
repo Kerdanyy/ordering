@@ -7,7 +7,7 @@ import lombok.Data;
 public class Stock {
     @DocumentId
     private String name;
-    private int quantity;
+    private int quantity; //in grams
     private int initialQuantity;
     private boolean notificationSent;
 }

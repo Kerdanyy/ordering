@@ -39,7 +39,7 @@ public class OrderService {
                 for (OrderProduct orderProduct : order.getProducts()) {
                     DocumentSnapshot productSnapshot = transaction.get(firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(String.valueOf(orderProduct.getId()))).get();
                     if (!productSnapshot.exists()) {
-                        throw new ValidationException("Only product with ID 1 is available currently");
+                        throw new ValidationException("Product with id " + orderProduct.getId() + " does not exist");
                     }
                     for (int i = 0; i < orderProduct.getQuantity(); i++) {
                         Product product = productSnapshot.toObject(Product.class);

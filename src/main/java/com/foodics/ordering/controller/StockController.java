@@ -13,22 +13,22 @@ import java.util.List;
 
 @RestController()
 @RequestMapping("/stock")
-@Tag(name = "Stock Controller", description = "Controller responsible for managing ingredient stock")
+@Tag(name = "Stock Controller", description = "Controller responsible for managing ingredient stocks")
 public class StockController {
 
     @Autowired
     StockService stockService;
 
     @GetMapping()
-    @Operation(summary = "Get all ingredients stock", description = "Get all available stocks each composed of ingredient name and quality (in grams)")
-    public ResponseEntity<List<Stock>> getAllStock() {
-        return new ResponseEntity<>(stockService.getAllStock(), HttpStatus.OK);
+    @Operation(summary = "Get all ingredients stocks", description = "Get all available ingredients stocks")
+    public ResponseEntity<List<Stock>> getAllStocks() {
+        return new ResponseEntity<>(stockService.getAllStocks(), HttpStatus.OK);
     }
 
     @PostMapping()
-    @Operation(summary = "Add stock of ingredients", description = "Takes input a list of stock each composed of ingredient name and quality (in grams)")
-    public ResponseEntity<Void> addStock(@RequestBody List<Stock> stocks) {
-        stockService.addStock(stocks);
+    @Operation(summary = "Add stocks of ingredients", description = "Add new stocks of ingredients")
+    public ResponseEntity<Void> addStocks(@RequestBody List<Stock> stocks) {
+        stockService.addStocks(stocks);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

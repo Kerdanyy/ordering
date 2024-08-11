@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
 @RequestMapping("/order")
-@Tag(name = "Order Controller", description = "Controller responsible for managing order")
+@Tag(name = "Order Controller", description = "Controller responsible for managing orders")
 public class OrderController {
 
     @Autowired
     OrderService orderService;
 
     @PostMapping()
-    @Operation(summary = "Add order", description = "Takes input an order containing list of products")
+    @Operation(summary = "Add order", description = "Takes input an order containing list of order products")
     public ResponseEntity<HttpStatus> addOrder(@RequestBody Order order) {
         orderService.addOrder(order);
         return new ResponseEntity<>(HttpStatus.OK);
