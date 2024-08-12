@@ -1,6 +1,5 @@
 ## Ordering Application
 
----
 A spring boot application for managing orders, products and ingredient stocks.
 
 The application is hosted on Google Cloud Platform (GCP) App Engine service and data is in Firestore no SQL database.
@@ -20,12 +19,9 @@ stock notification.
 
 ### How to run the application:
 
----
-
 You can run **OrderingApplication** class using your IDE or using maven by running **runApplication.bat** file
 
 ### How to run unit tests:
 
 You can run **OrderServiceTest** class using your IDE or using maven by running **runUnitTest.bat** file
 
----
