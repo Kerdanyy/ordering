@@ -27,25 +27,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("testing")
+//testing profile is used to switch to testing database
 class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
 
     @Autowired
-    private Firestore firestore;
+    private Firestore firestoreTesting;
 
 
     @BeforeEach
-    void setUp() {
-        // Clear firestore before each test
-        clearFirestore();
+    void runBeforeEachTest() {
+        clearDatabase();
     }
 
     @AfterEach
-    void tearDown() {
-        // Clear up firestore after each test
-        clearFirestore();
+    void runAfterEachTest() {
+        clearDatabase();
     }
 
     @Test
@@ -54,9 +53,9 @@ class OrderServiceTest {
         Ingredient beef = new Ingredient("beef", 500);
         Ingredient cheese = new Ingredient("cheese", 200);
         Ingredient onion = new Ingredient("onion", 100);
-        firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
-        firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("cheese").set(cheese).get();
-        firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("onion").set(onion).get();
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("cheese").set(cheese).get();
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("onion").set(onion).get();
 
         String productId = "1";
         Map<String, Integer> ingredients = new HashMap<>();
@@ -64,7 +63,7 @@ class OrderServiceTest {
         ingredients.put("cheese", 30);
         ingredients.put("onion", 20);
         Product product = new Product(productId, "burger", ingredients);
-        firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product).get();
+        firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product).get();
 
         int productQuantity = 1;
         OrderProduct orderProduct = new OrderProduct(productId, productQuantity);
@@ -74,15 +73,15 @@ class OrderServiceTest {
         orderService.addOrder(order);
 
         // Assert
-        Ingredient updatedBeef = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").get().get().toObject(Ingredient.class);
-        Ingredient updatedCheese = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("cheese").get().get().toObject(Ingredient.class);
-        Ingredient updatedOnion = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("onion").get().get().toObject(Ingredient.class);
+        Ingredient updatedBeef = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").get().get().toObject(Ingredient.class);
+        Ingredient updatedCheese = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("cheese").get().get().toObject(Ingredient.class);
+        Ingredient updatedOnion = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("onion").get().get().toObject(Ingredient.class);
 
         assertEquals(350, updatedBeef.getQuantity());
         assertEquals(170, updatedCheese.getQuantity());
         assertEquals(80, updatedOnion.getQuantity(), "");
 
-        List<Order> storedOrders = firestore.collection(Constants.ORDER_COLLECTION_NAME).get().get().toObjects(Order.class);
+        List<Order> storedOrders = firestoreTesting.collection(Constants.ORDER_COLLECTION_NAME).get().get().toObjects(Order.class);
         Order storedOrder = storedOrders.get(0);
         assertEquals(order, storedOrder);
     }
@@ -92,13 +91,13 @@ class OrderServiceTest {
     void testAddOrder_InsufficientStock_ThrowsException() {
         // Arrange
         Ingredient beef = new Ingredient("beef", 100);
-        firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
 
         String productId = "2";
         Map<String, Integer> ingredients = new HashMap<>();
         ingredients.put("beef", 150);
         Product product = new Product(productId, "burger", ingredients);
-        firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product).get();
+        firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product).get();
 
         int productQuantity = 1;
         OrderProduct orderProduct = new OrderProduct(productId, productQuantity);
@@ -114,13 +113,13 @@ class OrderServiceTest {
     void testAddOrder_ProductIdNotFound_ThrowsException() {
         // Arrange
         Ingredient beef = new Ingredient("beef", 500);
-        firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
+        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
 
         String productId = "1";
         Map<String, Integer> ingredients = new HashMap<>();
         ingredients.put("beef", 150);
         Product product2 = new Product(productId, "burger", ingredients);
-        firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product2).get();
+        firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product2).get();
 
         String notFoundProductId = "3";
         int productQuantity = 1;
@@ -132,10 +131,13 @@ class OrderServiceTest {
         assertEquals("Product with id 3 does not exist", exception.getMessage());
     }
 
-    private void clearFirestore() {
-        firestore.listCollections().forEach(collectionRef -> {
+    /**
+     * Clear all documents in DB
+     */
+    private void clearDatabase() {
+        firestoreTesting.listCollections().forEach(collectionRef -> {
             try {
-                WriteBatch batch = firestore.batch();
+                WriteBatch batch = firestoreTesting.batch();
                 collectionRef.listDocuments().forEach(docRef -> {
                     batch.delete(docRef);
                 });
