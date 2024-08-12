@@ -18,7 +18,7 @@ public class IngredientService {
     /**
      * Add ingredients in DB
      *
-     * @param ingredients A list of {@link AddIngredientRequest} object
+     * @param ingredients A list of {@link AddIngredientRequest}
      */
     public void addIngredients(List<AddIngredientRequest> ingredients) {
         ingredients.forEach(addIngredientRequest -> {
@@ -30,7 +30,7 @@ public class IngredientService {
     /**
      * Get all ingredients in DB
      *
-     * @return A list of {@link Ingredient} object
+     * @return A list of {@link Ingredient}
      */
     @SneakyThrows
     public List<Ingredient> getAllIngredients() {

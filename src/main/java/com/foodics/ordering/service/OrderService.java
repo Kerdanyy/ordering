@@ -75,7 +75,7 @@ public class OrderService {
      * @param ingredient The ingredient whose stock quantity needs to be adjusted.
      * @param product    The product containing the ingredients and their quantities that will be used to adjust the stock.
      * @param newStock   A map that stores the updated ingredients with their new stock quantities. The key is the ingredient
-     *                   name and the value is the updated {@link Ingredient} object.
+     *                   name and the value is the updated {@link Ingredient}.
      * @throws ValidationException If the resulting stock quantity of the ingredient is negative, indicating insufficient
      *                             stock to complete the order.
      */
@@ -94,7 +94,7 @@ public class OrderService {
     /**
      * Get all orders in DB
      *
-     * @return A list of {@link Order} object
+     * @return A list of {@link Order}
      */
     @SneakyThrows
     public List<Order> getAllOrders() {

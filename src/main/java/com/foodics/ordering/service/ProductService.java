@@ -17,7 +17,7 @@ public class ProductService {
     /**
      * Add products to DB
      *
-     * @param products A list of {@link Product} object
+     * @param products A list of {@link Product}
      */
     public void addProducts(List<Product> products) {
         products.forEach(product -> firestore.collection(Constants.PRODUCT_COLLECTION_NAME).document(product.getId()).set(product));
@@ -26,7 +26,7 @@ public class ProductService {
     /**
      * Get all products in DB
      *
-     * @return A list of {@link Product} object
+     * @return A list of {@link Product}
      */
     @SneakyThrows
     public List<Product> getAllProducts() {
