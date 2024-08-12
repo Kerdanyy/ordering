@@ -25,9 +25,16 @@ import java.util.concurrent.ExecutionException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Unit tests for the {@link OrderService} class.
+ * <p>
+ * This class tests the functionality of the {@link OrderService}
+ * It includes tests for successful order addition, insufficient stock, and product ID not found scenarios.
+ * "testing" profile is used to connect to a testing database
+ * </p>
+ */
 @SpringBootTest
 @ActiveProfiles("testing")
-//testing profile is used to connect to testing database
 class OrderServiceTest {
 
     @Autowired
@@ -36,17 +43,29 @@ class OrderServiceTest {
     @Autowired
     private Firestore firestoreTesting;
 
-
+    /**
+     * Sets up the test environment by clearing the Firestore database before each test.
+     */
     @BeforeEach
     void runBeforeEachTest() {
         clearDatabase();
     }
 
+    /**
+     * Cleans up the test environment by clearing the Firestore database after each test.
+     */
     @AfterEach
     void runAfterEachTest() {
         clearDatabase();
     }
 
+    /**
+     * Tests the successful addition of an order.
+     * <p>
+     * This test verifies that after adding an order, the stock quantities are updated correctly and
+     * the order is stored in the database.
+     * </p>
+     */
     @Test
     void testAddOrder_Success() throws Exception {
         // Arrange
@@ -86,6 +105,13 @@ class OrderServiceTest {
         assertEquals(order, storedOrder);
     }
 
+    /**
+     * Tests the behavior when there is insufficient stock to fulfill an order.
+     * <p>
+     * This test verifies that a {@link ValidationException} is thrown if the stock is insufficient for
+     * the requested order.
+     * </p>
+     */
     @Test
     @SneakyThrows
     void testAddOrder_InsufficientStock_ThrowsException() {
@@ -108,6 +134,13 @@ class OrderServiceTest {
         assertEquals("Order cannot be completed as beef ingredient stock is not enough", exception.getMessage());
     }
 
+    /**
+     * Tests the behavior when attempting to add an order with a non-existent product ID.
+     * <p>
+     * This test verifies that a {@link ValidationException} is thrown if the product ID in the order
+     * does not exist in the database.
+     * </p>
+     */
     @Test
     @SneakyThrows
     void testAddOrder_ProductIdNotFound_ThrowsException() {
@@ -132,7 +165,13 @@ class OrderServiceTest {
     }
 
     /**
-     * Clear all documents in DB
+     * Clears all documents in the Firestore database for testing purposes.
+     * <p>
+     * This method iterates through all collections and documents in the Firestore instance
+     * and deletes them in batches.
+     * </p>
+     *
+     * @throws FirestoreException If an error occurs while deleting documents.
      */
     private void clearDatabase() {
         firestoreTesting.listCollections().forEach(collectionRef -> {
