@@ -15,6 +15,11 @@ public class IngredientService {
     @Autowired
     Firestore firestore;
 
+    /**
+     * Add ingredients in DB
+     *
+     * @param ingredients
+     */
     public void addIngredients(List<AddIngredientRequest> ingredients) {
         ingredients.forEach(addIngredientRequest -> {
             Ingredient ingredient = new Ingredient(addIngredientRequest.getName(), addIngredientRequest.getQuantity());
@@ -22,6 +27,11 @@ public class IngredientService {
         });
     }
 
+    /**
+     * Get all ingredients in DB
+     *
+     * @return A list of {@link Ingredient} object
+     */
     @SneakyThrows
     public List<Ingredient> getAllIngredients() {
         return firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).get().get().toObjects(Ingredient.class);
