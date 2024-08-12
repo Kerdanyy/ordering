@@ -2,10 +2,18 @@
 
 A spring boot based application for managing orders, products and ingredient stocks.
 
-The application is hosted on Google Cloud Platform (GCP) App Engine service and data is in Firestore NoSQL database.
+The application is hosted on Google Cloud Platform (GCP) App Engine service.
 
 <a href="https://inspired-bazaar-431614-v1.nw.r.appspot.com/api/swagger-ui/index.html#" target="_blank">Swagger
 Documentation</a>
+
+### Database:
+
+The application stores data in Firestore NoSQL database and has 2 datasets:
+
+1- **(default)**: The main database used by the application.
+
+2- **testing**: Used when running unit tests to be isolated from the main database.
 
 ### Before Running the Application:
 
