@@ -1,8 +1,8 @@
 ## Ordering Application
 
-A spring boot application for managing orders, products and ingredient stocks.
+A spring boot based application for managing orders, products and ingredient stocks.
 
-The application is hosted on Google Cloud Platform (GCP) App Engine service and data is in Firestore no SQL database.
+The application is hosted on Google Cloud Platform (GCP) App Engine service and data is in Firestore NoSQL database.
 
 <a href="https://inspired-bazaar-431614-v1.nw.r.appspot.com/api/swagger-ui/index.html#" target="_blank">Swagger
 Documentation</a>
@@ -15,8 +15,8 @@ variables.
 2- Add **credentials.json** file in the main folder (which contains the README file) to be able to communicate with
 Firestore database.
 
-3- Replace **email.to** property inside **application.properties** file with desired email to send ingredient
-stock notification.
+3- Edit the **email.to** property value inside **application.properties** with desired email to send ingredient stock
+notification.
 
 ### How to run the application:
 
