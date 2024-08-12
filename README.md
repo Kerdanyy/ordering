@@ -4,7 +4,7 @@ A spring boot application for managing orders, products and ingredient stocks.
 
 The application is hosted on Google Cloud Platform (GCP) App Engine service and data is in Firestore no SQL database.
 
-<a href="https://inspired-bazaar-431614-v1.nw.r.appspot.com/api/swagger-ui/index.html#" target="_blank">Deployed Swagger
+<a href="https://inspired-bazaar-431614-v1.nw.r.appspot.com/api/swagger-ui/index.html#" target="_blank">Swagger
 Documentation</a>
 
 ### Before Running the Application:
