@@ -1,1 +1,1 @@
-mvnw clean install
+mvnw surefire-report:report
