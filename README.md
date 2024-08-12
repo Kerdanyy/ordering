@@ -15,6 +15,8 @@ The application stores data in Firestore NoSQL database and has 2 datasets:
 
 2- **testing**: Used when running unit tests to be isolated from the main database.
 
+Also there are 3 collections: **order**, **product** and **ingredient**.
+
 ### Before Running the Application:
 
 1- Make sure Java Development Kit (JDK) version **17** is installed and added in **JAVA_HOME** in your environment
