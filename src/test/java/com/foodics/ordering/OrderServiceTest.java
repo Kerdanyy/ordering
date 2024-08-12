@@ -69,12 +69,13 @@ class OrderServiceTest {
     @Test
     void testAddOrder_Success() throws Exception {
         // Arrange
+        WriteBatch batch = firestoreTesting.batch();
         Ingredient beef = new Ingredient("beef", 500);
         Ingredient cheese = new Ingredient("cheese", 200);
         Ingredient onion = new Ingredient("onion", 100);
-        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
-        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("cheese").set(cheese).get();
-        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("onion").set(onion).get();
+        batch.set(firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef"), beef);
+        batch.set(firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("cheese"), cheese);
+        batch.set(firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("onion"), onion);
 
         String productId = "1";
         Map<String, Integer> ingredients = new HashMap<>();
@@ -82,7 +83,9 @@ class OrderServiceTest {
         ingredients.put("cheese", 30);
         ingredients.put("onion", 20);
         Product product = new Product(productId, "burger", ingredients);
-        firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product).get();
+        batch.set(firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId), product);
+
+        batch.commit().get();
 
         int productQuantity = 1;
         OrderProduct orderProduct = new OrderProduct(productId, productQuantity);
@@ -116,14 +119,17 @@ class OrderServiceTest {
     @SneakyThrows
     void testAddOrder_InsufficientStock_ThrowsException() {
         // Arrange
+        WriteBatch batch = firestoreTesting.batch();
         Ingredient beef = new Ingredient("beef", 100);
-        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
+        batch.set(firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef"), beef);
 
         String productId = "2";
         Map<String, Integer> ingredients = new HashMap<>();
         ingredients.put("beef", 150);
         Product product = new Product(productId, "burger", ingredients);
-        firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product).get();
+        batch.set(firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId), product);
+
+        batch.commit().get();
 
         int productQuantity = 1;
         OrderProduct orderProduct = new OrderProduct(productId, productQuantity);
@@ -145,23 +151,26 @@ class OrderServiceTest {
     @SneakyThrows
     void testAddOrder_ProductIdNotFound_ThrowsException() {
         // Arrange
+        WriteBatch batch = firestoreTesting.batch();
         Ingredient beef = new Ingredient("beef", 500);
-        firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").set(beef).get();
+        batch.set(firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef"), beef);
 
-        String productId = "1";
+        String productId = "3";
         Map<String, Integer> ingredients = new HashMap<>();
         ingredients.put("beef", 150);
-        Product product2 = new Product(productId, "burger", ingredients);
-        firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId).set(product2).get();
+        Product product = new Product(productId, "burger", ingredients);
+        batch.set(firestoreTesting.collection(Constants.PRODUCT_COLLECTION_NAME).document(productId), product);
 
-        String notFoundProductId = "3";
+        batch.commit().get();
+
+        String notFoundProductId = "100";
         int productQuantity = 1;
         OrderProduct orderProduct = new OrderProduct(notFoundProductId, productQuantity);
         Order order = new Order(List.of(orderProduct));
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class, () -> orderService.addOrder(order));
-        assertEquals("Product with id 3 does not exist", exception.getMessage());
+        assertEquals("Product with id " + notFoundProductId + " does not exist", exception.getMessage());
     }
 
     /**
