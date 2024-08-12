@@ -12,7 +12,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -28,9 +27,6 @@ public class OrderService {
 
     @Autowired
     EmailService emailService;
-
-    @Value("${email.to}")
-    private String toEmail;
 
     /**
      * Adds a new order to the DB. The method processes the order by adjusting the ingredient stock
@@ -86,7 +82,7 @@ public class OrderService {
         }
         newStock.put(ingredient.getName(), ingredient);
         if (!ingredient.isNotificationSent() && ingredient.getQuantity() <= ingredient.getInitialQuantity() / 2) {
-            emailService.sendEmail(toEmail, "Ingredient Stock Notification", ingredient.getName() + " ingredient stock reached 50%");
+            emailService.sendEmail("Ingredient Stock Notification", ingredient.getName() + " ingredient stock reached 50%");
             ingredient.setNotificationSent(true);
         }
     }
