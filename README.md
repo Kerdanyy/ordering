@@ -9,10 +9,10 @@ Documentation</a>
 
 ### Before Running the Application:
 
-1- Make sure Java development kit (JDK) version **17** is installed and added in **JAVA_HOME** in your environment
+1- Make sure Java Development Kit (JDK) version **17** is installed and added in **JAVA_HOME** in your environment
 variables.
 
-2- Add credentials.json file in the main folder (which contains the README file) to be able to communicate with
+2- Add **credentials.json** file in the main folder (which contains the README file) to be able to communicate with
 Firestore database.
 
 3- Replace **email.to** property inside **application.properties** file with desired email to send ingredient
