@@ -16,11 +16,11 @@ public class EmailService {
     private String fromEmail;
 
     /**
-     * Sends an email
+     * Sends an email using the configured {@link JavaMailSender} instance.
      *
-     * @param toEmail
-     * @param subject
-     * @param body
+     * @param toEmail The recipient's email address.
+     * @param subject The subject of the email.
+     * @param body    The body content of the email.
      */
     public void sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
