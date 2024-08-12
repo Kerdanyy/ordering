@@ -22,7 +22,7 @@ notification.
 
 You can run **OrderingApplication** class using your IDE or using maven by running **runApplication.bat** file
 
-### How to run unit tests:
+### How to run unit test:
 
 You can run **OrderServiceTest** class using your IDE or using maven by running **runUnitTest.bat** file
 
