@@ -18,7 +18,7 @@ public class IngredientService {
     /**
      * Add ingredients in DB
      *
-     * @param ingredients
+     * @param ingredients A list of {@link AddIngredientRequest} object
      */
     public void addIngredients(List<AddIngredientRequest> ingredients) {
         ingredients.forEach(addIngredientRequest -> {
