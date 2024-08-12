@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("testing")
-//testing profile is used to switch to testing database
+//testing profile is used to connect to testing database
 class OrderServiceTest {
 
     @Autowired
