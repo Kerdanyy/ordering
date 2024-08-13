@@ -4,8 +4,7 @@ A spring boot based application for managing orders, products and ingredient sto
 
 The application is hosted on Google Cloud Platform (GCP) App Engine service.
 
-<a href="https://inspired-bazaar-431614-v1.nw.r.appspot.com/api/swagger-ui/index.html#" target="_blank">Swagger
-Documentation</a>
+[Swagger Documentation](https://inspired-bazaar-431614-v1.nw.r.appspot.com/api/swagger-ui/index.html)
 
 ### Database:
 
