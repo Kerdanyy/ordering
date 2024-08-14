@@ -92,7 +92,7 @@ class OrderServiceTest {
         Order order = new Order(List.of(orderProduct));
 
         // Act
-        orderService.addOrder(order);
+        String orderId = orderService.addOrder(order);
 
         // Assert
         Ingredient updatedBeef = firestoreTesting.collection(Constants.INGREDIENT_COLLECTION_NAME).document("beef").get().get().toObject(Ingredient.class);
@@ -103,8 +103,7 @@ class OrderServiceTest {
         assertEquals(170, updatedCheese.getQuantity());
         assertEquals(80, updatedOnion.getQuantity(), "");
 
-        List<Order> storedOrders = firestoreTesting.collection(Constants.ORDER_COLLECTION_NAME).get().get().toObjects(Order.class);
-        Order storedOrder = storedOrders.get(0);
+        Order storedOrder = firestoreTesting.collection(Constants.ORDER_COLLECTION_NAME).document(orderId).get().get().toObject(Order.class);
         assertEquals(order, storedOrder);
     }
 

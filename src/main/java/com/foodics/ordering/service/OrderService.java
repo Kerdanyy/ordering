@@ -34,13 +34,14 @@ public class OrderService {
      *
      * @param order The order to be added to the database. The order contains a list of products, and each product has a
      *              specified quantity that will be used to adjust the ingredient stock.
+     * @return The ID of the newly saved order.
      * @throws ValidationException If a product in the order does not exist
      */
     @SneakyThrows
-    public void addOrder(Order order) {
+    public String addOrder(Order order) {
         Map<String, Ingredient> newStock = new HashMap<>();
         try {
-            firestore.runTransaction((Transaction transaction) -> {
+            return firestore.runTransaction((Transaction transaction) -> {
                 Iterable<DocumentReference> currentStockListDocRef = firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).listDocuments();
                 for (DocumentReference currentIngredientStockRef : currentStockListDocRef) {
                     Ingredient currentIngredient = transaction.get(currentIngredientStockRef).get().toObject(Ingredient.class);
@@ -56,8 +57,9 @@ public class OrderService {
                     }
                 }
                 newStock.forEach((ingredientName, ingredient) -> transaction.set(firestore.collection(Constants.INGREDIENT_COLLECTION_NAME).document(ingredientName), ingredient));
-                transaction.set(firestore.collection(Constants.ORDER_COLLECTION_NAME).document(), order);
-                return null;
+                DocumentReference orderRef = firestore.collection(Constants.ORDER_COLLECTION_NAME).document();
+                transaction.set(orderRef, order);
+                return orderRef.getId();
             }).get();
         } catch (ExecutionException ex) {
             throw ex.getCause();

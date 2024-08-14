@@ -26,9 +26,8 @@ public class OrderController {
     }
 
     @PostMapping()
-    @Operation(summary = "Add order", description = "Takes input an order containing list of order products")
-    public ResponseEntity<HttpStatus> addOrder(@RequestBody Order order) {
-        orderService.addOrder(order);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @Operation(summary = "Add order", description = "Adds news order")
+    public ResponseEntity<String> addOrder(@RequestBody Order order) {
+        return new ResponseEntity<>(orderService.addOrder(order), HttpStatus.OK);
     }
 }
